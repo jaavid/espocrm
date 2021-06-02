@@ -30,8 +30,8 @@
 namespace Espo\Core\Portal\Loaders;
 
 use Espo\Core\{
-    Container\Loader,
     AclManager,
+    Loaders\Loader,
     Portal\Acl as AclService,
 };
 
@@ -39,17 +39,13 @@ use Espo\Entities\User;
 
 class Acl implements Loader
 {
-    private $aclManager;
-
-    private $user;
-
     public function __construct(AclManager $aclManager, User $user)
     {
         $this->aclManager = $aclManager;
         $this->user = $user;
     }
 
-    public function load(): AclService
+    public function load() : AclService
     {
         return new AclService($this->aclManager, $this->user);
     }

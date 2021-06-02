@@ -29,10 +29,7 @@
 
 namespace Espo\Core\EntryPoints;
 
-/**
- * @deprecated Use `Espo\Core\EntryPoint\Traits\NotStrictAuth` instead.
- */
 trait NotStrictAuth
 {
-    use \Espo\Core\EntryPoint\Traits\NotStrictAuth;
+    public static $notStrictAuth = true;
 }

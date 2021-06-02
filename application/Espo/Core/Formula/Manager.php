@@ -52,8 +52,6 @@ class Manager
 
     /**
      * Executes a script and returns its result.
-     *
-     * @return mixed
      */
     public function run(string $script, ?Entity $entity = null, ?StdClass $variables = null)
     {

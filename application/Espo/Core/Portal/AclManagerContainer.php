@@ -38,32 +38,27 @@ use Espo\Core\{
 
 use Espo\Core\Exceptions\Error;
 
-/**
- * Used when logged to CRM (not to portal) to provide an access checking ability for a specific portal.
+/** Used when logged to CRM (not to portal) to provide an access checking ability for a specific portal.
  * E.g. check whether a portal user has an access to some record within a specific portal.
  */
 class AclManagerContainer
 {
-    private $data = [];
+    protected $data = [];
 
-    private $injectableFactory;
+    protected $injectableFactory;
 
-    public function __construct(InjectableFactory $injectableFactory)
-    {
+    public function __construct(InjectableFactory $injectableFactory) {
         $this->injectableFactory = $injectableFactory;
     }
 
-    public function get(Portal $portal): AclManager
+    public function get(Portal $portal)
     {
         $id = $portal->id;
 
-        if (!$id) {
-            throw new Error("AclManagerContainer: portal should have ID.");
-        }
+        if (!$id) throw new Error("AclManagerContainer: portal should have ID.");
 
         if (!isset($this->data[$id])) {
             $aclManager = $this->injectableFactory->create(AclManager::class);
-
             $aclManager->setPortal($portal);
 
             $this->data[$id] = $aclManager;

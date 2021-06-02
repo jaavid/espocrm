@@ -38,19 +38,17 @@ class ThemeManager extends BaseThemeManager
 {
     public function __construct(Config $config, Metadata $metadata, Portal $portal)
     {
-        parent::__construct($config, $metadata);
-
+        $this->config = $config;
+        $this->metadata = $metadata;
         $this->portal = $portal;
     }
 
-    public function getName(): string
+    public function getName()
     {
         $theme = $this->portal->get('theme');
-
-        if ($theme) {
-            return $theme;
+        if (!$theme) {
+            $theme = $this->config->get('theme', $this->defaultName);
         }
-
-        return parent::getName();
+        return $theme;
     }
 }

@@ -36,9 +36,9 @@ use Espo\Core\Exceptions\{
 };
 
 use Espo\Core\{
-    Container\ContainerBuilder,
+    ContainerBuilder,
     Portal\Container as PortalContainer,
-    Portal\Container\ContainerConfiguration as PortalContainerConfiguration,
+    Portal\ContainerConfiguration as PortalContainerConfiguration,
     Portal\Utils\Config,
     Application as BaseApplication,
 };
@@ -57,7 +57,7 @@ class Application extends BaseApplication
         $this->initPreloads();
     }
 
-    protected function initContainer(): void
+    protected function initContainer()
     {
         $this->container = (new ContainerBuilder())
             ->withConfigClassName(Config::class)
@@ -66,7 +66,7 @@ class Application extends BaseApplication
             ->build();
     }
 
-    protected function initPortal(?string $portalId): void
+    protected function initPortal(?string $portalId)
     {
         if (!$portalId) {
             throw new Error("Portal ID was not passed to Portal\Application.");
@@ -77,10 +77,7 @@ class Application extends BaseApplication
         $portal = $entityManager->getEntity('Portal', $portalId);
 
         if (!$portal) {
-            $portal = $entityManager
-                ->getRepository('Portal')
-                ->where(['customId' => $portalId])
-                ->findOne();
+            $portal = $entityManager->getRepository('Portal')->where(['customId' => $portalId])->findOne();
         }
 
         if (!$portal) {
@@ -95,7 +92,12 @@ class Application extends BaseApplication
         $this->container->setPortal($portal);
     }
 
-    protected function initPreloads(): void
+    protected function getPortal()
+    {
+        return $this->portal;
+    }
+
+    protected function initPreloads()
     {
         parent::initPreloads();
 

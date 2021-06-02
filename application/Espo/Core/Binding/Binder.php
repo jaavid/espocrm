@@ -46,9 +46,11 @@ class Binder
      * @param $key An interface or interface with a parameter name (`Interface $name`).
      * @param $implementationClassName An implementation class name.
      */
-    public function bindImplementation(string $key, string $implementationClassName): self
+    public function bindImplementation(string $key, string $implementationClassName) : self
     {
-        $this->validateBindingKey($key);
+        if (!$key || $key[0] === '$') {
+            throw new LogicException("Can't binding a parameter name globally.");
+        }
 
         $this->data->addGlobal(
             $key,
@@ -59,14 +61,16 @@ class Binder
     }
 
     /**
-     * Bind an interface to a specific service.
+     * Bind an inteface to a specific service.
      *
      * @param $key An interface or interface with a parameter name (`Interface $name`).
      * @param $serviceName A service name.
      */
-    public function bindService(string $key, string $serviceName): self
+    public function bindService(string $key, string $serviceName) : self
     {
-        $this->validateBindingKey($key);
+        if (!$key || $key[0] === '$') {
+            throw new LogicException("Can't binding a parameter name globally.");
+        }
 
         $this->data->addGlobal(
             $key,
@@ -77,14 +81,16 @@ class Binder
     }
 
     /**
-     * Bind an interface to a callback.
+     * Bind an inteface or parameter name to a callback.
      *
      * @param $key An interface or interface with a parameter name (`Interface $name`).
      * @param $callback A callback that will resolve a dependency.
      */
-    public function bindCallback(string $key, callable $callback): self
+    public function bindCallback(string $key, callable $callback) : self
     {
-        $this->validateBindingKey($key);
+        if (!$key || $key[0] === '$') {
+            throw new LogicException("Can't binding a parameter name globally.");
+        }
 
         $this->data->addGlobal(
             $key,
@@ -95,41 +101,12 @@ class Binder
     }
 
     /**
-     * Bind an interface to a specific instance.
-     *
-     * @param $key An interface or interface with a parameter name (`Interface $name`).
-     * @param $instance An instance.
-     */
-    public function bindInstance(string $key, object $instance): self
-    {
-        $this->validateBindingKey($key);
-
-        $this->data->addGlobal(
-            $key,
-            Binding::createFromValue($instance)
-        );
-
-        return $this;
-    }
-
-    /**
      * Creates a contextual binder.
      *
      * @param $className A context.
      */
-    public function for(string $className): ContextualBinder
+    public function for(string $className) : ContextualBinder
     {
         return new ContextualBinder($this->data, $className);
-    }
-
-    private function validateBindingKey(string $key): void
-    {
-        if (!$key) {
-            throw new LogicException("Bad binding.");
-        }
-
-        if ($key[0] === '$') {
-            throw new LogicException("Can't binding a parameter name w/o an interface globally.");
-        }
     }
 }

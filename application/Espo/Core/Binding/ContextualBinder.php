@@ -49,9 +49,11 @@ class ContextualBinder
      * @param $key An interface or interface with a parameter name (`Interface $name`).
      * @param $implementationClassName An implementation class name.
      */
-    public function bindImplementation(string $key, string $implementationClassName): self
+    public function bindImplementation(string $key, string $implementationClassName) : self
     {
-        $this->validateBindingKeyNoParameterName($key);
+        if (!$key || $key[0] === '$') {
+            throw new LogicException("Bad binding.");
+        }
 
         $this->data->addContext(
             $this->className,
@@ -63,14 +65,16 @@ class ContextualBinder
     }
 
     /**
-     * Bind an interface to a specific service.
+     * Bind an inteface to a specific service.
      *
-     * @param $key An interface or interface with a parameter name (`Interface $name`).
+     * @param $key An interface, parameter name (`$name`) or interface with a parameter name (`Interface $name`).
      * @param $serviceName A service name.
      */
-    public function bindService(string $key, string $serviceName): self
+    public function bindService(string $key, string $serviceName) : self
     {
-        $this->validateBindingKeyNoParameterName($key);
+        if (!$key || $key[0] === '$') {
+            throw new LogicException("Bad binding.");
+        }
 
         $this->data->addContext(
             $this->className,
@@ -82,15 +86,13 @@ class ContextualBinder
     }
 
     /**
-     * Bind an interface or parameter name to a specific value.
+     * Bind an inteface or parameter name to a specific value.
      *
-     * @param $key Parameter name (`$name`) or interface with a parameter name (`Interface $name`).
+     * @param $key An interface, parameter name (`$name`) or interface with a parameter name (`Interface $name`).
      * @param $value A value of any type.
      */
-    public function bindValue(string $key, $value): self
+    public function bindValue(string $key, $value) : self
     {
-        $this->validateBindingKeyParameterName($key);
-
         $this->data->addContext(
             $this->className,
             $key,
@@ -101,35 +103,13 @@ class ContextualBinder
     }
 
     /**
-     * Bind an interface to a specific instance.
+     * Bind an inteface or parameter name to a callback.
      *
-     * @param $key An interface or interface with a parameter name (`Interface $name`).
-     * @param $instance An instance.
-     */
-    public function bindInstance(string $key, object $instance): self
-    {
-        $this->validateBindingKeyNoParameterName($key);
-
-        $this->data->addContext(
-            $this->className,
-            $key,
-            Binding::createFromValue($instance)
-        );
-
-        return $this;
-    }
-
-    /**
-     * Bind an interface or parameter name to a callback.
-     *
-     * @param $key An interface, parameter name (`$name`) or
-     * interface with a parameter name (`Interface $name`).
+     * @param $key An interface, parameter name (`$name`) or interface with a parameter name (`Interface $name`).
      * @param $callback A callback that will resolve a dependency.
      */
-    public function bindCallback(string $key, callable $callback): self
+    public function bindCallback(string $key, callable $callback) : self
     {
-        $this->validateBinding($key);
-
         $this->data->addContext(
             $this->className,
             $key,
@@ -137,30 +117,5 @@ class ContextualBinder
         );
 
         return $this;
-    }
-
-    private function validateBinding(string $key): void
-    {
-        if (!$key) {
-            throw new LogicException("Bad binding.");
-        }
-    }
-
-    private function validateBindingKeyNoParameterName(string $key): void
-    {
-        $this->validateBinding($key);
-
-        if ($key[0] === '$') {
-            throw new LogicException("Can't bind a parameter name w/o an interface.");
-        }
-    }
-
-    private function validateBindingKeyParameterName(string $key): void
-    {
-        $this->validateBinding($key);
-
-        if (strpos($key, '$') === false) {
-            throw new LogicException("Can't bind w/o a parameter name.");
-        }
     }
 }

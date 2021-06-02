@@ -41,6 +41,8 @@ use StdClass;
  */
 class Evaluator
 {
+    private $functionFactory;
+
     private $functionClassNameMap;
 
     private $processor;
@@ -59,13 +61,9 @@ class Evaluator
         $this->functionClassNameMap = $functionClassNameMap;
 
         $this->parser = new Parser();
-
         $this->parsedHash = [];
     }
 
-    /**
-     * @return mixed
-     */
     public function process(string $expression, ?Entity $entity = null, ?StdClass $variables = null)
     {
         $this->processor = new Processor(
@@ -81,7 +79,7 @@ class Evaluator
         return $result;
     }
 
-    private function getParsedExpression(string $expression): Argument
+    private function getParsedExpression(string $expression) : Argument
     {
         if (!array_key_exists($expression, $this->parsedHash)) {
             $this->parsedHash[$expression] = $this->parser->parse($expression);

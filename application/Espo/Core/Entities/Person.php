@@ -29,89 +29,32 @@
 
 namespace Espo\Core\Entities;
 
-use Espo\Core\{
-    ORM\Entity,
-    ORM\Helper,
-    Fields\EmailAddressGroup,
-    Fields\PhoneNumberGroup,
-    Fields\Address,
-};
-
-use Espo\ORM\{
-    EntityManager,
-    Value\ValueAccessorFactory,
-};
-
-class Person extends Entity
+class Person extends \Espo\Core\ORM\Entity
 {
-    private $helper;
+    public function _setLastName($value)
+    {
+        $this->setValue('lastName', $value);
 
-    public function __construct(
-        string $entityType,
-        array $defs,
-        EntityManager $entityManager,
-        Helper $helper,
-        ?ValueAccessorFactory $valueAccessorFactory = null
-    ) {
-        parent::__construct($entityType, $defs, $entityManager, $valueAccessorFactory);
+        $name = $this->getEntityManager()->getHelper()->formatPersonName($this, 'name');
 
-        $this->helper = $helper;
+        $this->setValue('name', $name);
     }
 
-    protected function _setLastName($value)
+    public function _setFirstName($value)
     {
-        $this->setInContainer('lastName', $value);
+        $this->setValue('firstName', $value);
 
-        $name = $this->helper->formatPersonName($this, 'name');
+        $name = $this->getEntityManager()->getHelper()->formatPersonName($this, 'name');
 
-        $this->setInContainer('name', $name);
+        $this->setValue('name', $name);
     }
 
-    protected function _setFirstName($value)
+    public function _setMiddleName($value)
     {
-        $this->setInContainer('firstName', $value);
+        $this->setValue('middleName', $value);
 
-        $name = $this->helper->formatPersonName($this, 'name');
+        $name = $this->getEntityManager()->getHelper()->formatPersonName($this, 'name');
 
-        $this->setInContainer('name', $name);
-    }
-
-    protected function _setMiddleName($value)
-    {
-        $this->setInContainer('middleName', $value);
-
-        $name = $this->helper->formatPersonName($this, 'name');
-
-        $this->setInContainer('name', $name);
-    }
-
-    public function getEmailAddressGroup(): EmailAddressGroup
-    {
-        return $this->getValueObject('emailAddress');
-    }
-
-    public function getPhoneNumberGroup(): PhoneNumberGroup
-    {
-        return $this->getValueObject('phoneNumber');
-    }
-
-    public function setEmailAddressGroup(EmailAddressGroup $group): void
-    {
-        $this->setValueObject('emailAddress', $group);
-    }
-
-    public function setPhoneNumberGroup(PhoneNumberGroup $group): void
-    {
-        $this->setValueObject('phoneNumber', $group);
-    }
-
-    public function getAddress(): Address
-    {
-        return $this->getValueObject('address');
-    }
-
-    public function setAddress(Address $address): void
-    {
-        $this->setValueObject('address', $address);
+        $this->setValue('name', $name);
     }
 }

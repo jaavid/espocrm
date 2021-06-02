@@ -31,18 +31,7 @@ namespace Espo\Core\Portal\Utils;
 
 class Url
 {
-    public static function detectPortalIdForApi(): ?string
-    {
-        if (!empty($_GET['portalId'])) {
-            return $_GET['portalId'];
-        }
-
-        $url = $_SERVER['REQUEST_URI'];
-
-        return explode('/', $url)[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1] ?? null;
-    }
-
-    public static function detectPortalId(): ?string
+    public static function detectPortalId() : ?string
     {
         $portalId = $_SERVER['ESPO_PORTAL_ID'] ?? null;
 
@@ -70,19 +59,15 @@ class Url
 
         $portalId = explode('/', $url)[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1] ?? null;
 
-        if ($portalId === '') {
-            $portalId = null;
-        }
-
         return $portalId;
     }
 
-    protected static function detectIsCustomUrl(): bool
+    protected static function detectIsCustomUrl() : bool
     {
         return (bool) ($_SERVER['ESPO_PORTAL_IS_CUSTOM_URL'] ?? false);
     }
 
-    public static function detectIsInPortalDir(): bool
+    public static function detectIsInPortalDir() : bool
     {
         $isCustomUrl = self::detectIsCustomUrl();
 
@@ -96,10 +81,10 @@ class Url
 
         $url = rtrim($a[0], '/');
 
-        return strpos($url, '/portal') !== false;
+        return strpos($url, '/portal') !== false ;
     }
 
-    public static function detectIsInPortalWithId(): bool
+    public static function detectIsInPortalWithId() : bool
     {
         if (!self::detectIsInPortalDir()) {
             return false;

@@ -35,14 +35,14 @@ use LogicException;
 
 class BindingContainer
 {
-    private $data;
+    protected $data;
 
-    public function __construct(BindingData $data)
+    public function __construct(BindingLoader $loader)
     {
-        $this->data = $data;
+        $this->data = $loader->load();
     }
 
-    public function has(?ReflectionClass $class, ReflectionParameter $param): bool
+    public function has(?ReflectionClass $class, ReflectionParameter $param) : bool
     {
         if ($this->getInternal($class, $param) === null) {
             return false;
@@ -51,7 +51,7 @@ class BindingContainer
         return true;
     }
 
-    public function get(?ReflectionClass $class, ReflectionParameter $param): Binding
+    public function get(?ReflectionClass $class, ReflectionParameter $param) : Binding
     {
         if (!$this->has($class, $param)) {
             throw new LogicException("BindingContainer: Can't get not existing binding.");
@@ -60,7 +60,7 @@ class BindingContainer
         return $this->getInternal($class, $param);
     }
 
-    private function getInternal(?ReflectionClass $class, ReflectionParameter $param): ?Binding
+    protected function getInternal(?ReflectionClass $class, ReflectionParameter $param) : ?Binding
     {
         $className = null;
 

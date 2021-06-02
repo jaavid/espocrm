@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="a315ac11-9e3b-49bd-b6aa-7bbc24c1dbc1" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/espocrm.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/symfony2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/AclPortal/Acl.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/AclPortal/Acl.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/AclPortal/Base.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/AclPortal/Base.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Api/Auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Api/Auth.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Api/AuthBuilder.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Api/AuthBuilder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Api/ErrorOutput.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Api/ErrorOutput.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Api/Request.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Api/Request.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Api/RequestWrapper.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Api/RequestWrapper.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Api/Response.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Api/Response.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Api/ResponseWrapper.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Api/ResponseWrapper.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Api/RouteProcessor.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Api/RouteProcessor.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Binding/Binder.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Binding/Binder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Binding/Binding.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Binding/Binding.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Binding/BindingContainer.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Binding/BindingContainer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Binding/BindingData.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Binding/BindingData.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Binding/BindingLoader.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Binding/BindingLoader.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Binding/ContextualBinder.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Binding/ContextualBinder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Binding/DefaultBinding.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Binding/DefaultBinding.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Binding/EspoBindingLoader.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Binding/EspoBindingLoader.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Container.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Container.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Controllers/Base.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Controllers/Base.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Controllers/Record.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Controllers/Record.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Controllers/RecordTree.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Controllers/RecordTree.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Entities/Person.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Entities/Person.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/EntryPoints/Base.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/EntryPoints/Base.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/EntryPoints/EntryPoint.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/EntryPoints/EntryPoint.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/EntryPoints/NoAuth.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/EntryPoints/NoAuth.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/EntryPoints/NotStrictAuth.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/EntryPoints/NotStrictAuth.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/ExternalAccount/ClientManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/ExternalAccount/ClientManager.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/ExternalAccount/Clients/Google.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/ExternalAccount/Clients/Google.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/ExternalAccount/Clients/OAuth2Abstract.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/ExternalAccount/Clients/OAuth2Abstract.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/ExternalAccount/OAuth2/Client.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/ExternalAccount/OAuth2/Client.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Formula/Argument.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Formula/Argument.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Formula/ArgumentList.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Formula/ArgumentList.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Formula/AttributeFetcher.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Formula/AttributeFetcher.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Formula/Evaluator.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Formula/Evaluator.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Formula/FunctionFactory.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Formula/FunctionFactory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Formula/Functions/EntityGroup/CountRelatedType.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Formula/Functions/EntityGroup/CountRelatedType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Formula/Functions/EntityGroup/SumRelatedType.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Formula/Functions/EntityGroup/SumRelatedType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Formula/Functions/JsonGroup/RetrieveType.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Formula/Functions/JsonGroup/RetrieveType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Formula/Manager.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Formula/Manager.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Formula/Parser.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Formula/Parser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Formula/Processor.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Formula/Processor.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/InjectableFactory.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/InjectableFactory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Notificators/DefaultNotificator.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Notificators/DefaultNotificator.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/Acl.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/Acl.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/AclManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/AclManager.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/AclManagerContainer.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/AclManagerContainer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/Application.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/Application.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/ApplicationRunners/Api.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/ApplicationRunners/Api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/ApplicationRunners/Client.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/ApplicationRunners/Client.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/Container.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/Container.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/Loaders/Acl.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/Loaders/Acl.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/Loaders/AclManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/Loaders/AclManager.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/Loaders/InternalAclManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/Loaders/InternalAclManager.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/Loaders/Language.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/Loaders/Language.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/Utils/Config.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/Utils/Config.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/Utils/Language.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/Utils/Language.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/Utils/Layout.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/Utils/Layout.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/Utils/Route.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/Utils/Route.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/Utils/ThemeManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/Utils/ThemeManager.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Portal/Utils/Url.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Portal/Utils/Url.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Repositories/CategoryTree.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Repositories/CategoryTree.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Repositories/Database.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Repositories/Database.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/Espo/Core/Repositories/Event.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/Espo/Core/Repositories/Event.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/doctrine/dbal" />
+      <path value="$PROJECT_DIR$/vendor/zbateson/mb-wrapper" />
+      <path value="$PROJECT_DIR$/vendor/zbateson/stream-decorators" />
+      <path value="$PROJECT_DIR$/vendor/zbateson/mail-mime-parser" />
+      <path value="$PROJECT_DIR$/vendor/react/promise-timer" />
+      <path value="$PROJECT_DIR$/vendor/laminas/laminas-servicemanager" />
+      <path value="$PROJECT_DIR$/vendor/react/dns" />
+      <path value="$PROJECT_DIR$/vendor/react/event-loop" />
+      <path value="$PROJECT_DIR$/vendor/react/cache" />
+      <path value="$PROJECT_DIR$/vendor/fig/http-message-util" />
+      <path value="$PROJECT_DIR$/vendor/react/socket" />
+      <path value="$PROJECT_DIR$/vendor/react/promise" />
+      <path value="$PROJECT_DIR$/vendor/react/stream" />
+      <path value="$PROJECT_DIR$/vendor/react/zmq" />
+      <path value="$PROJECT_DIR$/vendor/true/punycode" />
+      <path value="$PROJECT_DIR$/vendor/ezyang/htmlpurifier" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-server-handler" />
+      <path value="$PROJECT_DIR$/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/vendor/myclabs/php-enum" />
+      <path value="$PROJECT_DIR$/vendor/monolog/monolog" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-server-middleware" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/vendor/league/mime-type-detection" />
+      <path value="$PROJECT_DIR$/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/vendor/slim/slim" />
+      <path value="$PROJECT_DIR$/vendor/league/flysystem" />
+      <path value="$PROJECT_DIR$/vendor/robthree/twofactorauth" />
+      <path value="$PROJECT_DIR$/vendor/psr/cache" />
+      <path value="$PROJECT_DIR$/vendor/yzalis/identicon" />
+      <path value="$PROJECT_DIR$/vendor/cboden/ratchet" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-factory" />
+      <path value="$PROJECT_DIR$/vendor/symfony/translation" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-client" />
+      <path value="$PROJECT_DIR$/vendor/league/flysystem-async-aws-s3" />
+      <path value="$PROJECT_DIR$/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/vendor/slim/psr7" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/vendor/container-interop/container-interop" />
+      <path value="$PROJECT_DIR$/vendor/symfony/mime" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php72" />
+      <path value="$PROJECT_DIR$/vendor/nikic/fast-route" />
+      <path value="$PROJECT_DIR$/vendor/symfony/routing" />
+      <path value="$PROJECT_DIR$/vendor/maennchen/zipstream-php" />
+      <path value="$PROJECT_DIR$/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/translation-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/process" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/cache" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/event-manager" />
+      <path value="$PROJECT_DIR$/vendor/ralouphie/getallheaders" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-iconv" />
+      <path value="$PROJECT_DIR$/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/vendor/ratchet/rfc6455" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/psr7" />
+      <path value="$PROJECT_DIR$/vendor/evenement/evenement" />
+      <path value="$PROJECT_DIR$/vendor/async-aws/core" />
+      <path value="$PROJECT_DIR$/vendor/async-aws/s3" />
+      <path value="$PROJECT_DIR$/vendor/laminas/laminas-stdlib" />
+      <path value="$PROJECT_DIR$/vendor/laminas/laminas-loader" />
+      <path value="$PROJECT_DIR$/vendor/spatie/async" />
+      <path value="$PROJECT_DIR$/vendor/opis/closure" />
+      <path value="$PROJECT_DIR$/vendor/phpoffice/phpspreadsheet" />
+      <path value="$PROJECT_DIR$/vendor/dragonmantank/cron-expression" />
+      <path value="$PROJECT_DIR$/vendor/zordius/lightncandy" />
+      <path value="$PROJECT_DIR$/vendor/laminas/laminas-mime" />
+      <path value="$PROJECT_DIR$/vendor/laminas/laminas-zendframework-bridge" />
+      <path value="$PROJECT_DIR$/vendor/laminas/laminas-validator" />
+      <path value="$PROJECT_DIR$/vendor/laminas/laminas-mail" />
+      <path value="$PROJECT_DIR$/vendor/nesbot/carbon" />
+      <path value="$PROJECT_DIR$/vendor/laminas/laminas-ldap" />
+      <path value="$PROJECT_DIR$/vendor/markbaker/complex" />
+      <path value="$PROJECT_DIR$/vendor/tecnickcom/tcpdf" />
+      <path value="$PROJECT_DIR$/vendor/michelf/php-markdown" />
+      <path value="$PROJECT_DIR$/vendor/markbaker/matrix" />
+    </include_path>
+  </component>
+  <component name="ProjectId" id="1tNco4NoPScgvL9mLegzHNPFaGi" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="settings.editor.selected.configurable" value="Symfony.ProfilerSettingsForm" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RunManager">
+    <configuration name="phpunit.xml" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <TestRunner scope="XML" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a315ac11-9e3b-49bd-b6aa-7bbc24c1dbc1" name="Default Changelist" comment="" />
+      <created>1622613158816</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1622613158816</updated>
+      <workItem from="1622613160458" duration="593000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="474" y="297" width="688" height="231" key="#Composer" timestamp="1622617475052">
+      <screen x="67" y="25" width="1213" height="775" />
+    </state>
+    <state x="474" y="297" width="688" height="231" key="#Composer/67.25.1213.775@67.25.1213.775" timestamp="1622617475052" />
+    <state x="182" y="48" key="SettingsEditor" timestamp="1622613258067">
+      <screen x="67" y="25" width="1213" height="775" />
+    </state>
+    <state x="182" y="48" key="SettingsEditor/67.25.1213.775@67.25.1213.775" timestamp="1622613258067" />
+  </component>
+</project>

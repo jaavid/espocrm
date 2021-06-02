@@ -42,35 +42,35 @@ interface Response
     /**
      * Set a status code.
      */
-    public function setStatus(int $code, ?string $reason = null): self;
+    public function setStatus(int $code, ?string $reason = null);
 
     /**
      * Set a specific header.
      */
-    public function setHeader(string $name, string $value): self;
+    public function setHeader(string $name, string $value);
 
     /**
      * Get a header value.
      */
-    public function getHeader(string $name): ?string;
+    public function getHeader(string $name) : ?string;
 
     /**
      * Whether a header is set.
      */
-    public function hasHeader(string $name): bool;
+    public function hasHeader(string $name) : bool;
 
     /**
      * Write a body.
      */
-    public function writeBody(string $string): self;
+    public function writeBody(string $string);
 
     /**
      * Set a body.
      */
-    public function setBody(StreamInterface $body): self;
+    public function setBody(StreamInterface $body);
 
     /**
      * Get a result PSR-7 response.
      */
-    public function getResponse(): Psr7Response;
+    public function getResponse() : Psr7Response;
 }

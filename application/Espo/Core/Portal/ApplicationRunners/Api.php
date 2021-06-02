@@ -31,34 +31,16 @@ namespace Espo\Core\Portal\ApplicationRunners;
 
 use Espo\Core\{
     ApplicationRunners\Api as ApiBase,
-    Authentication\AuthenticationFactory,
+    InjectableFactory,
     ApplicationUser,
     Portal\Utils\Route,
-    Api\AuthBuilderFactory,
-    Api\RouteProcessor,
-    Api\ErrorOutput,
     Utils\Log,
 };
 
 class Api extends ApiBase
 {
-    public function __construct(
-        RouteProcessor $routeProcessor,
-        AuthenticationFactory $authenticationFactory,
-        ApplicationUser $applicationUser,
-        Route $routeUtil,
-        AuthBuilderFactory $authBuilderFactory,
-        ErrorOutput $errorOutput,
-        Log $log
-    ) {
-        parent::__construct(
-            $routeProcessor,
-            $authenticationFactory,
-            $applicationUser,
-            $routeUtil,
-            $authBuilderFactory,
-            $errorOutput,
-            $log
-        );
+    public function __construct(InjectableFactory $injectableFactory, ApplicationUser $applicationUser, Route $routeUtil, Log $log)
+    {
+        parent::__construct($injectableFactory, $applicationUser, $routeUtil, $log);
     }
 }

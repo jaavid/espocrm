@@ -29,196 +29,83 @@
 
 namespace Espo\Core\Controllers;
 
-use Espo\Core\{
-    Exceptions\Forbidden,
-    Container,
-    Acl,
-    AclManager,
-    Utils\Config,
-    Utils\Metadata,
-    ServiceFactory,
-};
+use Espo\Core\Container;
 
-use Espo\Entities\{
-    User,
-    Preferences,
-};
-
-/**
- * @deprecated Don't extend.
- */
 abstract class Base
 {
     protected $name;
 
-    public static $defaultAction = 'index';
-
-    /**
-     * @deprecated
-     */
     private $container;
 
-    protected $user;
+    public static $defaultAction = 'index';
 
-    protected $acl;
-
-    /**
-     * @deprecated
-     */
-    protected $aclManager;
-
-    protected $config;
-
-    /**
-     * @deprecated
-     */
-    protected $preferences;
-
-    /**
-     * @deprecated
-     */
-    protected $metadata;
-
-    /**
-     * @deprecated
-     */
-    protected $serviceFactory;
-
-    /**
-     * @internal Most of dependencies are for backward compatibility.
-     */
-    public function __construct(
-        Container $container,
-        User $user,
-        Acl $acl,
-        AclManager $aclManager,
-        Config $config,
-        Preferences $preferences,
-        Metadata $metadata,
-        ServiceFactory $serviceFactory
-    ) {
+    public function __construct(Container $container)
+    {
         $this->container = $container;
-        $this->user = $user;
-        $this->acl = $acl;
-        $this->aclManager = $aclManager;
-        $this->config = $config;
-        $this->preferences = $preferences;
-        $this->metadata = $metadata;
-        $this->serviceFactory = $serviceFactory;
 
         if (empty($this->name)) {
             $name = get_class($this);
-
-            $matches = null;
-
             if (preg_match('@\\\\([\w]+)$@', $name, $matches)) {
                 $name = $matches[1];
             }
-
             $this->name = $name;
         }
 
         $this->checkControllerAccess();
-
-        if (!$this->checkAccess()) {
-            throw new Forbidden("No access to '{$this->name}'.");
-        }
     }
 
-    /**
-     * @deprecated
-     */
-    protected function getName(): string
+    protected function getName()
     {
         return $this->name;
     }
 
-    /**
-     * Check access to controller.
-     */
-    protected function checkAccess(): bool
-    {
-        return true;
-    }
-
-    /**
-     * @throws Forbidden
-     * @deprecated
-     */
     protected function checkControllerAccess()
     {
         return;
     }
 
-    /**
-     * @deprecated
-     */
-    protected function getService($name): object
-    {
-        return $this->serviceFactory->create($name);
-    }
-
-    /**
-     * @deprecated Use Aware interfaces to inject dependencies.
-     */
     protected function getContainer()
     {
         return $this->container;
     }
 
-    /**
-     * @deprecated
-     */
     protected function getUser()
     {
         return $this->container->get('user');
     }
 
-    /**
-     * @deprecated
-     */
     protected function getAcl()
     {
         return $this->container->get('acl');
     }
 
-    /**
-     * @deprecated
-     */
     protected function getAclManager()
     {
         return $this->container->get('aclManager');
     }
 
-    /**
-     * @deprecated
-     */
     protected function getConfig()
     {
         return $this->container->get('config');
     }
 
-    /**
-     * @deprecated
-     */
     protected function getPreferences()
     {
         return $this->container->get('preferences');
     }
 
-    /**
-     * @deprecated
-     */
     protected function getMetadata()
     {
         return $this->container->get('metadata');
     }
 
-    /**
-     * @deprecated
-     */
     protected function getServiceFactory()
     {
         return $this->container->get('serviceFactory');
+    }
+
+    protected function getService($name)
+    {
+        return $this->getServiceFactory()->create($name);
     }
 }

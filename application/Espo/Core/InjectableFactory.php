@@ -33,6 +33,7 @@ use Espo\Core\{
     Exceptions\Error,
     Interfaces\Injectable,
     Binding\BindingContainer,
+    Binding\BindingLoader,
     Binding\Binding,
 };
 
@@ -50,9 +51,9 @@ use Throwable;
  */
 class InjectableFactory
 {
-    private $container;
+    protected $container;
 
-    private $bindingContainer;
+    protected $bindingContainer;
 
     public function __construct(Container $container, ?BindingContainer $bindingContainer = null)
     {
@@ -61,43 +62,35 @@ class InjectableFactory
     }
 
     /**
-     * Create an instance by a class name.
+     * Creates an instance by a class name.
      */
-    public function create(string $className): object
+    public function create(string $className) : object
     {
-        return $this->createInternal($className);
+        return $this->createByClassName($className);
     }
 
     /**
-     * Create an instance by a class name with specific constructor parameters
-     * defined in an associative array. A key should match the parameter name.
+     * Creates an instance by a class name. Allows passing specific constructor parameters.
+     * Defined in an associative array. A key should match the parameter name.
      */
-    public function createWith(string $className, array $with): object
+    public function createWith(string $className, array $with = []) : object
     {
-        return $this->createInternal($className, $with);
+        return $this->createByClassName($className, $with);
     }
 
     /**
-     * Create an instance by a class name with a specific binding.
+     * @deprecated Use create or createWith methods instead. Left public for backward compatibility.
+     * @todo Make protected.
      */
-    public function createWithBinding(string $className, BindingContainer $bindingContainer): object
+    public function createByClassName(string $className, ?array $with = null) : object
     {
-        return $this->createInternal($className, null, $bindingContainer);
-    }
-
-    private function createInternal(
-        string $className,
-        ?array $with = null,
-        ?BindingContainer $bindingContainer = null
-    ): object {
-
         if (!class_exists($className)) {
             throw new Error("InjectableFactory: Class '{$className}' does not exist.");
         }
 
         $class = new ReflectionClass($className);
 
-        $injectionList = $this->getConstructorInjectionList($class, $with, $bindingContainer);
+        $injectionList = $this->getConstructorInjectionList($class, $with);
 
         $obj = $class->newInstanceArgs($injectionList);
 
@@ -113,12 +106,35 @@ class InjectableFactory
         return $obj;
     }
 
-    private function getConstructorInjectionList(
-        ReflectionClass $class,
-        ?array $with = null,
-        ?BindingContainer $bindingContainer = null
-    ): array {
+    /**
+     * @deprecated
+     * @todo Remove in 6.4.
+     */
+    protected function applyInjectable(ReflectionClass $class, object $obj)
+    {
+        $setList = [];
 
+        $dependencyList = $obj->getDependencyList();
+
+        foreach ($dependencyList as $name) {
+            $injection = $this->container->get($name);
+
+            if ($this->classHasDependencySetter($class, $name)) {
+                $methodName = 'set' . ucfirst($name);
+                $obj->$methodName($injection);
+                $setList[] = $name;
+            }
+
+            $obj->inject($name, $injection);
+        }
+
+        $this->applyAwareInjections($class, $obj, $setList);
+
+        return $obj;
+    }
+
+    protected function getConstructorInjectionList(ReflectionClass $class, ?array $with = null) : array
+    {
         $injectionList = [];
 
         $constructor = $class->getConstructor();
@@ -130,22 +146,14 @@ class InjectableFactory
         $params = $constructor->getParameters();
 
         foreach ($params as $param) {
-            $injectionList[] = $this->getMethodParamInjection($class, $param, $with, $bindingContainer);
+            $injectionList[] = $this->getMethodParamInjection($class, $param, $with);
         }
 
         return $injectionList;
     }
 
-    /**
-     * @return mixed
-     */
-    private function getMethodParamInjection(
-        ?ReflectionClass $class,
-        ReflectionParameter $param,
-        ?array $with = null,
-        ?BindingContainer $bindingContainer = null
-    ) {
-
+    protected function getMethodParamInjection(?ReflectionClass $class, ReflectionParameter $param, ?array $with)
+    {
         $name = $param->getName();
 
         if ($with && array_key_exists($name, $with)) {
@@ -170,16 +178,10 @@ class InjectableFactory
             }
         }
 
-        if ($bindingContainer && $bindingContainer->has($class, $param)) {
-            $binding = $bindingContainer->get($class, $param);
-
-            return $this->resolveBinding($binding, $bindingContainer);
-        }
-
         if ($this->bindingContainer && $this->bindingContainer->has($class, $param)) {
             $binding = $this->bindingContainer->get($class, $param);
 
-            return $this->resolveBinding($binding, $bindingContainer);
+            return $this->resolveBinding($binding);
         }
 
         if (!$dependencyClass && $param->isDefaultValueAvailable()) {
@@ -198,39 +200,32 @@ class InjectableFactory
         }
 
         if ($dependencyClass) {
-            return $this->createInternal($dependencyClass->getName(), null, $bindingContainer);
+            return $this->create($dependencyClass->getName());
         }
 
         if (!$class) {
-            throw new Error(
-                "InjectableFactory: Could not resolve the dependency '{$name}' for a callback."
-            );
+            throw new Error("InjectableFactory: Could not resolve the dependency '{$name}' for a callback.");
         }
 
         $className = $class->getName();
 
-        throw new Error(
-            "InjectableFactory: Could not create '{$className}', the dependency '{$name}' is not resolved."
-        );
+        throw new Error("InjectableFactory: Could not create '{$className}', the dependency '{$name}' is not resolved.");
     }
 
-    private function getCallbackInjectionList(callable $callback): array
+    protected function getCallbackInjectionList(callable $callback, ?array $with = null) : array
     {
         $injectionList = [];
 
         $function = new ReflectionFunction($callback);
 
         foreach ($function->getParameters() as $param) {
-            $injectionList[] = $this->getMethodParamInjection(null, $param);
+            $injectionList[] = $this->getMethodParamInjection(null, $param, $with);
         }
 
         return $injectionList;
     }
 
-    /**
-     * @return mixed
-     */
-    private function resolveBinding(Binding $binding, ?BindingContainer $bindingContainer)
+    protected function resolveBinding(Binding $binding)
     {
         $type = $binding->getType();
         $value = $binding->getValue();
@@ -240,7 +235,7 @@ class InjectableFactory
         }
 
         if ($type === Binding::IMPLEMENTATION_CLASS_NAME) {
-            return $this->createInternal($value, null, $bindingContainer);
+            return $this->create($value);
         }
 
         if ($type === Binding::VALUE) {
@@ -258,11 +253,8 @@ class InjectableFactory
         throw new Error("InjectableFactory: Bad binding.");
     }
 
-    private function areDependencyClassesMatching(
-        ReflectionClass $paramHintClass,
-        ReflectionClass $returnHintClass
-    ): bool {
-
+    protected function areDependencyClassesMatching(ReflectionClass $paramHintClass, ReflectionClass $returnHintClass) : bool
+    {
         if ($paramHintClass->getName() === $returnHintClass->getName()) {
             return true;
         }
@@ -274,7 +266,7 @@ class InjectableFactory
         return false;
     }
 
-    private function applyAwareInjections(ReflectionClass $class, object $obj, array $ignoreList = []): void
+    protected function applyAwareInjections(ReflectionClass $class, object $obj, array $ignoreList = [])
     {
         foreach ($class->getInterfaces() as $interface) {
             $interfaceName = $interface->getShortName();
@@ -296,17 +288,12 @@ class InjectableFactory
             $injection = $this->container->get($name);
 
             $methodName = 'set' . ucfirst($name);
-
             $obj->$methodName($injection);
         }
     }
 
-    private function classHasDependencySetter(
-        ReflectionClass $class,
-        string $name,
-        bool $skipInstanceCheck = false
-    ): bool {
-
+    protected function classHasDependencySetter(ReflectionClass $class, string $name, bool $skipInstanceCheck = false) : bool
+    {
         $methodName = 'set' . ucfirst($name);
 
         if (!$class->hasMethod($methodName) || !$class->getMethod($methodName)->isPublic()) {
@@ -338,38 +325,5 @@ class InjectableFactory
         }
 
         return false;
-    }
-
-    /**
-     * @deprecated Use create or createWith methods instead.
-     */
-    public function createByClassName(string $className, ?array $with = null): object
-    {
-        return $this->createInternal($className, $with);
-    }
-
-    /**
-     * @deprecated
-     * @todo Remove in 6.4.
-     */
-    private function applyInjectable(ReflectionClass $class, object $obj): void
-    {
-        $setList = [];
-
-        $dependencyList = $obj->getDependencyList();
-
-        foreach ($dependencyList as $name) {
-            $injection = $this->container->get($name);
-
-            if ($this->classHasDependencySetter($class, $name)) {
-                $methodName = 'set' . ucfirst($name);
-                $obj->$methodName($injection);
-                $setList[] = $name;
-            }
-
-            $obj->inject($name, $injection);
-        }
-
-        $this->applyAwareInjections($class, $obj, $setList);
     }
 }

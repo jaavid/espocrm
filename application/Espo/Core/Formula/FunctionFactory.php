@@ -59,23 +59,19 @@ class FunctionFactory
         $this->classNameMap = $classNameMap;
     }
 
-    public function create(string $name, ?Entity $entity = null, ?StdClass $variables = null): object
+    public function create(string $name, ?Entity $entity = null, ?StdClass $variables = null)
     {
         if ($this->classNameMap && array_key_exists($name, $this->classNameMap)) {
             $className = $this->classNameMap[$name];
-        }
-        else {
+        } else {
             $arr = explode('\\', $name);
-
             foreach ($arr as $i => $part) {
                 if ($i < count($arr) - 1) {
                     $part = $part . 'Group';
                 }
                 $arr[$i] = ucfirst($part);
             }
-
             $typeName = implode('\\', $arr);
-
             $className = 'Espo\\Core\\Formula\\Functions\\' . $typeName . 'Type';
         }
 
@@ -91,10 +87,7 @@ class FunctionFactory
             'attributeFetcher' => $this->attributeFetcher,
         ]);
 
-        if (
-            property_exists($className, 'hasAttributeFetcher') ||
-            method_exists($className, 'setAttributeFetcher')
-        ) {
+        if (property_exists($className, 'hasAttributeFetcher') || method_exists($className, 'setAttributeFetcher')) {
             $object->setAttributeFetcher($this->attributeFetcher);
         }
 

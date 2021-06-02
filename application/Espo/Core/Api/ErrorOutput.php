@@ -34,13 +34,12 @@ use Espo\Core\{
     Api\Response,
     Exceptions\Conflict,
     Exceptions\Error,
-    Utils\Log,
 };
 
 use Throwable;
 
 /**
- * Processes an error output. If an exception occurred, it will be passed to here.
+ * Processes an error output. If an exception occured, it will be passed to here.
  */
 class ErrorOutput
 {
@@ -70,55 +69,30 @@ class ErrorOutput
         'PDOException',
     ];
 
-    private $log;
+    protected $request;
 
-    public function __construct(Log $log)
+    protected $route;
+
+    public function __construct(Request $request, ?string $route = null)
     {
-        $this->log = $log;
+        $this->request = $request;
+        $this->route = $route;
     }
 
-    public function process(
-        Request $request,
-        Response $response,
-        Throwable $exception,
-        ?string $route = null
-    ): void {
-
-        $this->processInternal($request, $response, $exception, $route, false);
-    }
-
-    public function processWithBodyPrinting(
-        Request $request,
-        Response $response,
-        Throwable $exception,
-        ?string $route = null
-    ): void {
-
-        $this->processInternal($request, $response, $exception, $route, true);
-    }
-
-    private function processInternal(
-        Request $request,
-        Response $response,
-        Throwable $exception,
-        ?string $route = null,
-        bool $toPrintBody = false
-    ): void {
-
+    public function process(Response $response, Throwable $exception, bool $toPrintBody = false)
+    {
         $message = $exception->getMessage() ?? '';
         $statusCode = $exception->getCode();
 
-        if ($route) {
-            $this->processRoute($route, $request, $exception);
+        if ($this->route) {
+            $this->processRoute($response, $exception);
         }
 
         $logLevel = 'error';
 
         $messageLineFile = null;
 
-        $messageLineFile =
-            'line: ' . $exception->getLine() . ', ' .
-            'file: ' . $exception->getFile();
+        $messageLineFile = 'line: ' . $exception->getLine() . ', file: ' . $exception->getFile();
 
         if (!empty($exception->logLevel)) {
             $logLevel = $exception->logLevel;
@@ -130,7 +104,7 @@ class ErrorOutput
             $logMessageItemList[] = "{$message}";
         }
 
-        $logMessageItemList[] = $request->getMethod() . ' ' . $request->getResourcePath();
+        $logMessageItemList[] = $this->request->getMethod() . ' ' . $this->request->getResourcePath();
 
         if ($messageLineFile) {
             $logMessageItemList[] = $messageLineFile;
@@ -138,12 +112,17 @@ class ErrorOutput
 
         $logMessage = "($statusCode) " . implode("; ", $logMessageItemList);
 
-        $this->log->log($logLevel, $logMessage);
+        $GLOBALS['log']->log($logLevel, $logMessage);
 
-        $toPrintBodyXStatusReason = !in_array(
-            get_class($exception),
-            $this->ignorePrintXStatusReasonExceptionClassNameList
-        );
+        $toPrintBodyXStatusReason = true;
+
+        if (
+            in_array(
+                get_class($exception), $this->ignorePrintXStatusReasonExceptionClassNameList
+            )
+        ) {
+            $toPrintBodyXStatusReason = false;
+        }
 
         if (!in_array($statusCode, $this->allowedStatusCodeList)) {
             $statusCode = 500;
@@ -162,10 +141,10 @@ class ErrorOutput
         }
 
         if ($toPrintBody) {
-            $codeDesription = $this->getCodeDescription($statusCode);
+            $statusText = $this->getCodeDescription($statusCode);
 
-            $statusText = isset($codeDesription) ?
-                $statusCode . ' '. $codeDesription :
+            $statusText = isset($statusText) ?
+                $statusCode . ' '. $statusText :
                 'HTTP ' . $statusCode;
 
             if ($message) {
@@ -176,11 +155,12 @@ class ErrorOutput
         }
     }
 
-    protected function doesExceptionHaveBody(Throwable $exception): bool
+    protected function doesExceptionHaveBody(Throwable $exception) : bool
     {
         if (
-            !$exception instanceof Error &&
-            !$exception instanceof Conflict
+            ! $exception instanceof Error
+            &&
+            ! $exception instanceof Conflict
         ) {
             return false;
         }
@@ -194,7 +174,7 @@ class ErrorOutput
         return $exceptionBody !== null;
     }
 
-    protected function getCodeDescription(int $statusCode): ?string
+    protected function getCodeDescription(int $statusCode) : ?string
     {
         if (isset($this->errorDescriptions[$statusCode])) {
             return $this->errorDescriptions[$statusCode];
@@ -203,12 +183,12 @@ class ErrorOutput
         return null;
     }
 
-    protected function clearPasswords(string $string): string
+    protected function clearPasswords(string $string) : string
     {
         return preg_replace('/"(.*?password.*?)":".*?"/i', '"$1":"*****"', $string);
     }
 
-    protected static function generateErrorBody(string $header, string $text): string
+    protected static function generateErrorBody(string $header, string $text) : string
     {
         $body = "<h1>" . $header . "</h1>";
         $body .= $text;
@@ -216,21 +196,24 @@ class ErrorOutput
         return $body;
     }
 
-    protected function stripInvalidCharactersFromHeaderValue(string $value): string
+    protected function stripInvalidCharactersFromHeaderValue(string $value) : string
     {
         $pattern = "/[^ \t\x21-\x7E\x80-\xFF]/";
 
-        return preg_replace($pattern, ' ', $value);
+        $value = preg_replace($pattern, ' ', $value);
+
+        return $value;
     }
 
-    protected function processRoute(string $route, Request $request, Throwable $exception): void
+    protected function processRoute(Response $response, Throwable $exception)
     {
-        $requestBodyString = $this->clearPasswords($request->getBodyContents());
+        $requestBodyString = $this->request->getBodyContents();
+        $requestBodyString = $this->clearPasswords($requestBodyString);
 
         $message = $exception->getMessage() ?? '';
         $statusCode = $exception->getCode();
 
-        $routeParams = $request->getRouteParams();
+        $routeParams = $this->request->getRouteParams();
 
         $logMessage = "API ($statusCode) ";
 
@@ -240,13 +223,13 @@ class ErrorOutput
             $logMessageItemList[] = $message;
         }
 
-        $logMessageItemList[] .= $request->getMethod() . ' ' . $request->getResourcePath();
+        $logMessageItemList[] .= $this->request->getMethod() . ' ' . $this->request->getResourcePath();
 
         if ($requestBodyString) {
             $logMessageItemList[] = "Input data: " . $requestBodyString;
         }
 
-        $logMessageItemList[] = "Route pattern: " . $route;
+        $logMessageItemList[] = "Route pattern: " . $this->route;
 
         if (!empty($routeParams)) {
             $logMessageItemList[] = "Route params: " . print_r($routeParams, true);
@@ -254,6 +237,6 @@ class ErrorOutput
 
         $logMessage .= implode("; ", $logMessageItemList);
 
-        $this->log->log('debug', $logMessage);
+        $GLOBALS['log']->log('debug', $logMessage);
     }
 }

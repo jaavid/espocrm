@@ -29,26 +29,20 @@
 
 namespace Espo\Core\Controllers;
 
+use Espo\Core\Exceptions\Error;
 use Espo\Core\Exceptions\Forbidden;
-
-use Espo\Core\{
-    Api\Request,
-};
-
-use StdClass;
+use Espo\Core\Exceptions\NotFound;
+use Espo\Core\Exceptions\BadRequest;
+use Espo\Core\Utils\Util;
 
 class RecordTree extends Record
 {
     public static $defaultAction = 'list';
 
-    /**
-     * Get a category tree.
-     */
-    public function getActionListTree(Request $request): StdClass
+    public function actionListTree($params, $data, $request)
     {
-        if (method_exists($this, 'actionListTree')) {
-            // For backward compatibility.
-            return (object) $this->actionListTree($request->getRouteParams(), $request->getParsedBody(), $request);
+        if (!$this->getAcl()->check($this->name, 'read')) {
+            throw new Forbidden();
         }
 
         $where = $request->get('where');
@@ -56,25 +50,19 @@ class RecordTree extends Record
         $maxDepth = $request->get('maxDepth');
         $onlyNotEmpty = $request->get('onlyNotEmpty');
 
-        $collection = $this->getRecordService()->getTree(
-            $parentId,
-            [
-                'where' => $where,
-                'onlyNotEmpty' => $onlyNotEmpty,
-            ],
-            $maxDepth
-        );
-
+        $collection = $this->getRecordService()->getTree($parentId, [
+            'where' => $where,
+            'onlyNotEmpty' => $onlyNotEmpty
+        ], 0, $maxDepth);
         return (object) [
-            'list' => $collection->getValueMapList(),
+            'list' => $collection->toArray(),
             'path' => $this->getRecordService()->getTreeItemPath($parentId),
-            'data' => $this->getRecordService()->getCategoryData($parentId),
         ];
     }
 
-    public function getActionLastChildrenIdList($params, $data, $request): array
+    public function getActionLastChildrenIdList($params, $data, $request)
     {
-        if (!$this->acl->check($this->name, 'read')) {
+        if (!$this->getAcl()->check($this->name, 'read')) {
             throw new Forbidden();
         }
 

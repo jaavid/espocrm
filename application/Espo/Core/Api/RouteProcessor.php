@@ -31,26 +31,28 @@ namespace Espo\Core\Api;
 
 use Espo\Core\{
     Utils\Config,
+    Utils\Json,
+    ControllerManager,
     Exceptions\Error,
 };
 
+use StdClass;
+
 /**
- * Processes routes. Obtains a controller name, action, body from a request.
- * Then passes them to the action processor.
+ * Processes routes. Obtains a controller name, action, body from a request. Then passes them to controller manager.
  */
 class RouteProcessor
 {
-    private $config;
+    protected $config;
+    protected $controllerManager;
 
-    private $actionProcessor;
-
-    public function __construct(Config $config, ActionProcessor $actionProcessor)
+    public function __construct(Config $config, ControllerManager $controllerManager)
     {
         $this->config = $config;
-        $this->actionProcessor = $actionProcessor;
+        $this->controllerManager = $controllerManager;
     }
 
-    public function process(string $route, Request $request, Response $response): void
+    public function process(string $route, Request $request, Response $response)
     {
         $response->setHeader('Content-Type', 'application/json');
 
@@ -79,10 +81,26 @@ class RouteProcessor
             }
         }
 
-        $this->actionProcessor->process($controllerName, $actionName, $request, $response);
+        $result = $this->controllerManager->process($controllerName, $actionName, $request, $response) ?? null;
+
+        $responseContents = $result;
+
+        if (
+            is_int($result) ||
+            is_float($result) ||
+            is_array($result) ||
+            is_bool($result) ||
+            $result instanceof StdClass
+        ) {
+            $responseContents = Json::encode($result);
+        }
+
+        if (is_string($responseContents)) {
+            $response->writeBody($responseContents);
+        }
 
         $response->setHeader('Expires', '0');
-        $response->setHeader('Last-Modified', gmdate('D, d M Y H:i:s') . ' GMT');
+        $response->setHeader('Last-Modified', gmdate("D, d M Y H:i:s") . " GMT");
         $response->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
         $response->setHeader('Pragma', 'no-cache');
     }

@@ -29,9 +29,9 @@
 
 namespace Espo\Core\Binding;
 
-class DefaultBinding implements BindingProcessor
+class DefaultBinding
 {
-    public function process(Binder $binder): void
+    public function process(Binder $binder)
     {
         $binder->bindService(
             'Espo\\Core\\InjectableFactory',
@@ -44,11 +44,6 @@ class DefaultBinding implements BindingProcessor
         );
 
         $binder->bindService(
-            'Espo\\Core\\Container\\Container',
-            'container'
-        );
-
-        $binder->bindService(
             'Espo\\ORM\\EntityManager',
             'entityManager'
         );
@@ -56,11 +51,6 @@ class DefaultBinding implements BindingProcessor
         $binder->bindService(
             'Espo\\Core\\ORM\\EntityManager',
             'entityManager'
-        );
-
-        $binder->bindService(
-            'Espo\\ORM\\Defs',
-            'ormDefs'
         );
 
         $binder->bindService(
@@ -94,17 +84,12 @@ class DefaultBinding implements BindingProcessor
         );
 
         $binder->bindService(
-            'Espo\\Core\\SelectBuilderFactory',
-            'selectBuilderFactory'
-        );
-
-        $binder->bindService(
             'Espo\\Core\\ServiceFactory',
             'serviceFactory'
         );
 
         $binder->bindService(
-            'Espo\\Core\\Record\\ServiceContainer',
+            'Espo\\Core\\RecordServiceContainer',
             'recordServiceContainer'
         );
 
@@ -181,21 +166,6 @@ class DefaultBinding implements BindingProcessor
         $binder->bindService(
             'Espo\\Core\\Acl',
             'acl'
-        );
-
-        $binder->bindImplementation(
-            'Espo\\Core\\WebSocket\\Sender',
-            'Espo\\Core\\WebSocket\\ZeroMQSender'
-        );
-
-        $binder->bindImplementation(
-            'Espo\\Core\\WebSocket\\Subscriber',
-            'Espo\\Core\\WebSocket\\ZeroMQSubscriber'
-        );
-
-         $binder->bindImplementation(
-            'Espo\\Core\\Acl\\Table\\TableFactory',
-            'Espo\\Core\\Acl\\Table\\DefaultTableFactory'
         );
     }
 }

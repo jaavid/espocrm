@@ -30,63 +30,27 @@
 namespace Espo\Core\Portal;
 
 use Espo\ORM\Entity;
-
 use Espo\Entities\User;
 
-use Espo\Core\Acl as BaseAcl;
-
-class Acl extends BaseAcl
+class Acl extends \Espo\Core\Acl
 {
-    public function __construct(AclManager $aclManager, User $user)
+    public function checkReadOnlyAccount(string $scope) : bool
     {
-        parent::__construct($aclManager, $user);
+        return $this->getAclManager()->checkReadOnlyAccount($this->getUser(), $scope);
     }
 
-    /**
-     * Whether 'read' access is set to 'account' for a specific scope.
-     */
-    public function checkReadOnlyAccount(string $scope): bool
+    public function checkReadOnlyContact(string $scope) : bool
     {
-        return $this->aclManager->checkReadOnlyAccount($this->user, $scope);
+        return $this->getAclManager()->checkReadOnlyContact($this->getUser(), $scope);
     }
 
-    /**
-     * Whether 'read' access is set to 'contact' for a specific scope.
-     */
-    public function checkReadOnlyContact(string $scope): bool
+    public function checkInAccount(Entity $entity) : bool
     {
-        return $this->aclManager->checkReadOnlyContact($this->user, $scope);
+        return $this->getAclManager()->checkInAccount($this->getUser(), $entity);
     }
 
-    /**
-     * Check whether an entity belongs to a user account.
-     */
-    public function checkOwnershipAccount(Entity $entity): bool
+    public function checkIsOwnContact(Entity $entity) : bool
     {
-        return $this->aclManager->checkOwnershipAccount($this->user, $entity);
-    }
-
-    /**
-     * Check whether an entity belongs to a user contact.
-     */
-    public function checkOwnershipContact(Entity $entity): bool
-    {
-        return $this->aclManager->checkOwnershipContact($this->user, $entity);
-    }
-
-    /**
-     * @deprecate
-     */
-    public function checkInAccount(Entity $entity): bool
-    {
-        return $this->checkOwnershipAccount($entity);
-    }
-
-    /**
-     * @deprecate
-     */
-    public function checkIsOwnContact(Entity $entity): bool
-    {
-        return $this->checkOwnershipContact($entity);
+        return $this->getAclManager()->checkIsOwnContact($this->getUser(), $entity);
     }
 }

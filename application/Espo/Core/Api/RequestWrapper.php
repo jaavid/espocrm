@@ -62,9 +62,8 @@ class RequestWrapper implements ApiRequest
      * Get a route or query parameter. Route params have a higher priority.
      *
      * @todo Don't support NULL $name.
-     * @deprecated For backward compatibility.
      *
-     * @return mixed
+     * @return ?string
      */
     public function get(?string $name = null)
     {
@@ -82,29 +81,26 @@ class RequestWrapper implements ApiRequest
         return $this->getQueryParam($name);
     }
 
-    public function hasRouteParam(string $name): bool
+    public function hasRouteParam(string $name) : bool
     {
         return array_key_exists($name, $this->routeParams);
     }
 
-    public function getRouteParam(string $name): ?string
+    public function getRouteParam(string $name) : ?string
     {
         return $this->routeParams[$name] ?? null;
     }
 
-    public function getRouteParams(): array
+    public function getRouteParams() : array
     {
         return $this->routeParams;
     }
 
-    public function hasQueryParam(string $name): bool
+    public function hasQueryParam(string $name) : bool
     {
         return array_key_exists($name, $this->request->getQueryParams());
     }
 
-    /**
-     * @return ?string|array
-     */
     public function getQueryParam(string $name)
     {
         $value = $this->request->getQueryParams()[$name] ?? null;
@@ -116,12 +112,12 @@ class RequestWrapper implements ApiRequest
         return $value;
     }
 
-    public function getQueryParams(): array
+    public function getQueryParams() : array
     {
         return $this->request->getQueryParams();
     }
 
-    public function getHeader(string $name): ?string
+    public function getHeader(string $name) : ?string
     {
         if (!$this->request->hasHeader($name)) {
             return null;
@@ -130,31 +126,28 @@ class RequestWrapper implements ApiRequest
         return $this->request->getHeaderLine($name);
     }
 
-    public function hasHeader(string $name): bool
+    public function hasHeader(string $name) : bool
     {
         return $this->request->hasHeader($name);
     }
 
-    public function getMethod(): string
+    public function getMethod() : string
     {
         return $this->request->getMethod();
     }
 
-    public function getContentType(): ?string
+    public function getContentType() : ?string
     {
         if (!$this->hasHeader('Content-Type')) {
             return null;
         }
 
-        $contentType = explode(
-            ';',
-            $this->request->getHeader('Content-Type')[0]
-        )[0];
+        $contentType = $this->request->getHeader('Content-Type')[0];
 
         return strtolower($contentType);
     }
 
-    public function getBodyContents(): ?string
+    public function getBodyContents() : ?string
     {
         $contents = $this->request->getBody()->getContents();
 
@@ -163,13 +156,13 @@ class RequestWrapper implements ApiRequest
         return $contents;
     }
 
-    public function getParsedBody(): StdClass
+    public function getParsedBody() : StdClass
     {
         if ($this->parsedBody === null) {
             $this->initParsedBody();
         }
 
-        return Util::cloneObject($this->parsedBody);
+        return $this->parsedBody;
     }
 
     protected function initParsedBody()
@@ -191,61 +184,58 @@ class RequestWrapper implements ApiRequest
         $this->parsedBody = (object) [];
     }
 
-    public function getCookieParam(string $name): ?string
+    public function getCookieParam(string $name) : ?string
     {
         $params = $this->request->getCookieParams();
 
         return $params[$name] ?? null;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getServerParam(string $name)
+    public function getServerParam(string $name) : ?string
     {
         $params = $this->request->getServerParams();
 
         return $params[$name] ?? null;
     }
 
-    public function getUri(): UriInterface
+    public function getUri() : UriInterface
     {
         return $this->request->getUri();
     }
 
-    public function getResourcePath(): string
+    public function getResourcePath() : string
     {
         $path = $this->request->getUri()->getPath();
 
         return substr($path, strlen($this->basePath));
     }
 
-    public function isGet(): bool
+    public function isGet() : bool
     {
         return $this->getMethod() === 'GET';
     }
 
-    public function isPut(): bool
+    public function isPut() : bool
     {
         return $this->getMethod() === 'PUT';
     }
 
-    public function isUpdate(): bool
+    public function isUpdate() : bool
     {
         return $this->getMethod() === 'UPDATE';
     }
 
-    public function isPost(): bool
+    public function isPost() : bool
     {
         return $this->getMethod() === 'POST';
     }
 
-    public function isPatch(): bool
+    public function isPatch() : bool
     {
         return $this->getMethod() === 'PATCH';
     }
 
-    public function isDelete(): bool
+    public function isDelete() : bool
     {
         return $this->getMethod() === 'DELETE';
     }

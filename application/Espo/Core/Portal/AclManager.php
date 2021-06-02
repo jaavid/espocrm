@@ -29,346 +29,246 @@
 
 namespace Espo\Core\Portal;
 
-use Espo\ORM\{
-    Entity,
-    EntityManager,
-};
+use Espo\ORM\Entity;
+use Espo\Entities\User;
+use Espo\Core\Utils\Util;
 
-use Espo\Entities\{
-    User,
-    Portal,
-};
+use Espo\Entities\Portal;
 
 use Espo\Core\{
-    Portal\Acl\Table,
-    Portal\Acl\Table\TableFactory,
-    Portal\Acl\AccessChecker\AccessCheckerFactory,
-    Portal\Acl\OwnershipChecker\OwnershipCheckerFactory,
-    Portal\Acl\OwnershipAccountChecker,
-    Portal\Acl\OwnershipContactChecker,
-    Portal\Acl,
-    Portal\Acl\Map\MapFactory,
-    Acl\GlobalRestricton,
-    Acl\OwnerUserFieldProvider,
-    Acl\Table as TableBase,
-    Acl\Map\Map,
-    AclManager as InternalAclManager,
+    AclPortal\Table as AclPortalTable,
+    AclPortal\Acl as BasePortalAcl,
+    AclPortal\PortalScopeAcl,
+    Acl\ScopeAcl,
+    Portal\Acl as UserAclWrapper,
+    AclManager as BaseAclManager,
 };
 
-use StdClass;
-use RuntimeException;
+use Espo\Core\Exceptions\Error;
 
-class AclManager extends InternalAclManager
+class AclManager extends BaseAclManager
 {
-    protected $userAclClassName = Acl::class;
+    protected $tableClassName = AclPortalTable::class;
 
-    private $internalAclManager = null;
+    private $mainManager = null;
 
     private $portal = null;
 
-    public function __construct(
-        AccessCheckerFactory $accessCheckerFactory,
-        OwnershipCheckerFactory $ownershipCheckerFactory,
-        TableFactory $tableFactory,
-        MapFactory $mapFactory,
-        GlobalRestricton $globalRestricton,
-        OwnerUserFieldProvider $ownerUserFieldProvider,
-        EntityManager $entityManager,
-        InternalAclManager $internalAclManager
-    ) {
-        $this->accessCheckerFactory = $accessCheckerFactory;
-        $this->ownershipCheckerFactory = $ownershipCheckerFactory;
-        $this->tableFactory = $tableFactory;
-        $this->mapFactory = $mapFactory;
-        $this->globalRestricton = $globalRestricton;
-        $this->ownerUserFieldProvider = $ownerUserFieldProvider;
-        $this->entityManager = $entityManager;
-        $this->internalAclManager = $internalAclManager;
+    protected $userAclClassName = UserAclWrapper::class;
+
+    protected $baseImplementationClassName = BasePortalAcl::class;
+
+    public function getImplementation(string $scope) : ScopeAcl
+    {
+        if (empty($this->implementationHashMap[$scope])) {
+            $className = $this->classFinder->find('AclPortal', $scope);
+
+            if (!$className) {
+                $className = $this->baseImplementationClassName;
+            }
+
+            if (!class_exists($className)) {
+                throw new Error("{$className} does not exist.");
+            }
+
+            $acl = $this->injectableFactory->createWith($className, [
+                'scope' => $scope,
+            ]);
+
+            $this->implementationHashMap[$scope] = $acl;
+
+            if (!$acl instanceof PortalScopeAcl) {
+                throw new Error("Portal\AclManager: Implementation should be instance of PortalScopeAcl.");
+            }
+        }
+
+        return $this->implementationHashMap[$scope];
     }
 
-    public function setPortal(Portal $portal): void
+    public function setMainManager(BaseAclManager $mainManager)
+    {
+        $this->mainManager = $mainManager;
+    }
+
+    protected function getMainManager()
+    {
+        return $this->mainManager;
+    }
+
+    public function setPortal(Portal $portal)
     {
         $this->portal = $portal;
     }
 
-    protected function getPortal(): Portal
+    protected function getPortal() : Portal
     {
-        if (!$this->portal) {
-            throw new RuntimeException("Portal is not set.");
-        }
-
-        return $this->portal;
+        return $this->portal ?? null;
     }
 
-    protected function getTable(User $user): TableBase
+    protected function getTable(User $user)
     {
-        $key = $user->getId();
-
-        if (!$key) {
+        $key = $user->id;
+        if (empty($key)) {
             $key = spl_object_hash($user);
         }
 
-        if (!array_key_exists($key, $this->tableHashMap)) {
-            $this->tableHashMap[$key] = $this->tableFactory->create($user, $this->getPortal());
+        if (empty($this->tableHashMap[$key])) {
+            $this->tableHashMap[$key] = $this->injectableFactory->createWith($this->tableClassName, [
+                'user' => $user,
+                'portal' => $this->getPortal(),
+            ]);
         }
 
         return $this->tableHashMap[$key];
     }
 
-    protected function getMap(User $user): Map
+    public function checkReadOnlyAccount(User $user, string $scope) : bool
     {
-        $key = $user->getId();
-
-        if (!$key) {
-            $key = spl_object_hash($user);
+        if ($user->isAdmin()) {
+            return false;
         }
-
-        if (!array_key_exists($key, $this->mapHashMap)) {
-            $this->mapHashMap[$key] = $this->mapFactory
-                ->create($user, $this->getTable($user), $this->getPortal());
-        }
-
-        return $this->mapHashMap[$key];
+        $data = $this->getTable($user)->getScopeData($scope);
+        return $this->getImplementation($scope)->checkReadOnlyAccount($user, $data);
     }
 
-    public function getMapData(User $user): StdClass
+    public function checkReadOnlyContact(User $user, string $scope) : bool
     {
-        if ($this->checkUserIsNotPortal($user)) {
-            return $this->internalAclManager->getMapData($user);
+        if ($user->isAdmin()) {
+            return false;
         }
-
-        return parent::getMapData($user);
+        $data = $this->getTable($user)->getScopeData($scope);
+        return $this->getImplementation($scope)->checkReadOnlyContact($user, $data);
     }
 
-    public function getLevel(User $user, string $scope, string $action): string
+    public function checkInAccount(User $user, Entity $entity) : bool
+    {
+        return (bool) $this->getImplementation($entity->getEntityType())->checkInAccount($user, $entity);
+    }
+
+    public function checkIsOwnContact(User $user, Entity $entity) : bool
+    {
+        return (bool) $this->getImplementation($entity->getEntityType())->checkIsOwnContact($user, $entity);
+    }
+
+    public function getMap(User $user) : \StdClass
     {
         if ($this->checkUserIsNotPortal($user)) {
-            return $this->internalAclManager->getLevel($user, $scope, $action);
+            return $this->getMainManager()->getMap($user);
         }
+        return parent::getMap($user);
+    }
 
+    public function getLevel(User $user, string $scope, string $action) : string
+    {
+        if ($this->checkUserIsNotPortal($user)) {
+            return $this->getMainManager()->getLevel($user, $scope, $action);
+        }
         return parent::getLevel($user, $scope, $action);
     }
 
-    public function getPermissionLevel(User $user, string $permission): string
+    public function get(User $user, string $permission) : ?string
     {
         if ($this->checkUserIsNotPortal($user)) {
-            return $this->internalAclManager->getPermissionLevel($user, $permission);
+            return $this->getMainManager()->get($user, $permission);
         }
-
-        return parent::getPermissionLevel($user, $permission);
+        return parent::get($user, $permission);
     }
 
-    public function checkReadOnlyTeam(User $user, string $scope): bool
+    public function checkReadOnlyTeam(User $user, string $scope) : bool
     {
         if ($this->checkUserIsNotPortal($user)) {
-            return $this->internalAclManager->checkReadOnlyTeam($user, $scope);
+            $data = $this->getTable($user)->getScopeData($scope);
+            return $this->getMainManager()->checkReadOnlyTeam($user, $data);
         }
-
-        return false;
+        return parent::checkReadOnlyTeam($user, $scope);
     }
 
-    public function checkReadNo(User $user, string $scope): bool
+    public function checkReadNo(User $user, string $scope) : bool
     {
         if ($this->checkUserIsNotPortal($user)) {
-            return $this->internalAclManager->checkReadNo($user, $scope);
+            $data = $this->getTable($user)->getScopeData($scope);
+            return $this->getMainManager()->checkReadNo($user, $data);
         }
-
         return parent::checkReadNo($user, $scope);
     }
 
-    public function checkReadOnlyOwn(User $user, string $scope): bool
+    public function checkReadOnlyOwn(User $user, string $scope) : bool
     {
         if ($this->checkUserIsNotPortal($user)) {
-            return $this->internalAclManager->checkReadOnlyOwn($user, $scope);
+            $data = $this->getTable($user)->getScopeData($scope);
+            return $this->getMainManager()->checkReadOnlyOwn($user, $data);
         }
-
         return parent::checkReadOnlyOwn($user, $scope);
     }
 
-    public function checkReadAll(User $user, string $scope): bool
+    public function check(User $user, $subject, ?string $action = null) : bool
     {
         if ($this->checkUserIsNotPortal($user)) {
-            return $this->internalAclManager->checkReadAll($user, $scope);
+            return $this->getMainManager()->check($user, $subject, $action);
         }
-
-        return parent::checkReadAll($user, $scope);
-    }
-
-    /**
-     * Whether 'read' access is set to 'account' for a specific scope.
-     */
-    public function checkReadOnlyAccount(User $user, string $scope): bool
-    {
-        return $this->getLevel($user, $scope, Table::ACTION_READ) === Table::LEVEL_ACCOUNT;
-    }
-
-    /**
-     * Whether 'read' access is set to 'contact' for a specific scope.
-     */
-    public function checkReadOnlyContact(User $user, string $scope): bool
-    {
-        return $this->getLevel($user, $scope, Table::ACTION_READ)=== Table::LEVEL_CONTACT;
-    }
-
-    public function check(User $user, $subject, ?string $action = null): bool
-    {
-        if ($this->checkUserIsNotPortal($user)) {
-            return $this->internalAclManager->check($user, $subject, $action);
-        }
-
         return parent::check($user, $subject, $action);
     }
 
-    public function checkEntity(User $user, Entity $entity, string $action = Table::ACTION_READ): bool
+    public function checkEntity(User $user, Entity $entity, string $action = 'read') : bool
     {
         if ($this->checkUserIsNotPortal($user)) {
-            return $this->internalAclManager->checkEntity($user, $entity, $action);
+            return $this->getMainManager()->checkEntity($user, $entity, $action);
         }
-
         return parent::checkEntity($user, $entity, $action);
     }
 
-    public function checkUserPermission(User $user, $target, string $permissionType = 'user'): bool
-    {
-        return $this->internalAclManager->checkUserPermission($user, $target, $permissionType);
-    }
-
-    public function checkOwnershipOwn(User $user, Entity $entity): bool
+    public function checkIsOwner(User $user, Entity $entity) : bool
     {
         if ($this->checkUserIsNotPortal($user)) {
-            return $this->internalAclManager->checkOwnershipOwn($user, $entity);
+            return $this->getMainManager()->checkIsOwner($user, $entity);
         }
-
-        return parent::checkOwnershipOwn($user, $entity);
+        return parent::checkIsOwner($user, $entity);
     }
 
-    public function checkOwnershipTeam(User $user, Entity $entity): bool
+    public function checkInTeam(User $user, Entity $entity) : bool
     {
         if ($this->checkUserIsNotPortal($user)) {
-            return $this->internalAclManager->checkOwnershipTeam($user, $entity);
+            return $this->getMainManager()->checkInTeam($user, $entity);
         }
-
-        return parent::checkOwnershipOwn($user, $entity);
+        return parent::checkInTeam($user, $entity);
     }
 
-    /**
-     * Check whether an entity belongs to a user account.
-     */
-    public function checkOwnershipAccount(User $user, Entity $entity): bool
-    {
-        $checker = $this->getOwnershipChecker($entity->getEntityType());
-
-        if (!$checker instanceof OwnershipAccountChecker) {
-            return false;
-        }
-
-        return $checker->checkAccount($user, $entity);
-    }
-
-    /**
-     * Check whether an entity belongs to a user account.
-     */
-    public function checkOwnershipContact(User $user, Entity $entity): bool
-    {
-        $checker = $this->getOwnershipChecker($entity->getEntityType());
-
-        if (!$checker instanceof OwnershipContactChecker) {
-            return false;
-        }
-
-        return $checker->checkContact($user, $entity);
-    }
-
-    public function checkScope(User $user, string $scope, ?string $action = null): bool
+    public function checkScope(User $user, string $scope, ?string $action = null) : bool
     {
         if ($this->checkUserIsNotPortal($user)) {
-            return $this->internalAclManager->checkScope($user, $scope, $action);
+            return $this->getMainManager()->checkScope($user, $scope, $action);
         }
-
         return parent::checkScope($user, $scope, $action);
     }
 
-    public function checkUser(User $user, string $permission, User $entity): bool
+    public function checkUser(User $user, string $permission, User $entity) : bool
     {
         if ($this->checkUserIsNotPortal($user)) {
-            return $this->internalAclManager->checkUser($user, $permission, $entity);
+            return $this->getMainManager()->checkUser($user, $permission, $entity);
         }
-
         return parent::checkUser($user, $permission, $entity);
     }
 
     public function getScopeForbiddenAttributeList(
-        User $user,
-        string $scope,
-        string $action = Table::ACTION_READ,
-        string $thresholdLevel = Table::LEVEL_NO
-    ): array {
-
+        User $user, string $scope, string $action = 'read', string $thresholdLevel = 'no'
+    ) : array {
         if ($this->checkUserIsNotPortal($user)) {
-            return $this->internalAclManager
-                ->getScopeForbiddenAttributeList($user, $scope, $action, $thresholdLevel);
+            return $this->getMainManager()->getScopeForbiddenAttributeList($user, $scope, $action, $thresholdLevel);
         }
-
         return parent::getScopeForbiddenAttributeList($user, $scope, $action, $thresholdLevel);
     }
 
     public function getScopeForbiddenFieldList(
-        User $user,
-        string $scope,
-        string $action = Table::ACTION_READ,
-        string $thresholdLevel = Table::LEVEL_NO
-    ): array {
-
+        User $user, string $scope, string $action = 'read', string $thresholdLevel = 'no'
+    ) : array {
         if ($this->checkUserIsNotPortal($user)) {
-            return $this->internalAclManager
-                ->getScopeForbiddenFieldList($user, $scope, $action, $thresholdLevel);
+            return $this->getMainManager()->getScopeForbiddenFieldList($user, $scope, $action, $thresholdLevel);
         }
-
         return parent::getScopeForbiddenFieldList($user, $scope, $action, $thresholdLevel);
     }
 
-    protected function checkUserIsNotPortal(User $user): bool
+    protected function checkUserIsNotPortal(User $user) : bool
     {
         return !$user->isPortal();
-    }
-
-    /**
-     * @deprecated Use `getPermissionLevel` instead.
-     */
-    public function get(User $user, string $permission): string
-    {
-        return $this->getPermissionLevel($user, $permission);
-    }
-
-    /**
-     * @deprecated
-     */
-    public function checkIsOwner(User $user, Entity $entity): bool
-    {
-        return $this->checkOwnershipOwn($user, $entity);
-    }
-
-    /**
-     * @deprecated
-     */
-    public function checkInTeam(User $user, Entity $entity): bool
-    {
-        return $this->checkOwnershipTeam($user, $entity);
-    }
-
-    /**
-     * @deprecated
-     */
-    public function checkInAccount(User $user, Entity $entity): bool
-    {
-        return $this->checkOwnershipAccount($user, $entity);
-    }
-
-    /**
-     * @deprecated
-     */
-    public function checkIsOwnContact(User $user, Entity $entity): bool
-    {
-        return $this->checkOwnershipContact($user, $entity);
     }
 }
